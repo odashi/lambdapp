@@ -10,8 +10,8 @@ namespace lambdapp {
 
 class Expr_;
 class Id_;
-class Abst_;
-class Apply_;
+class Abs_;
+class App_;
 typedef std::shared_ptr<Expr_> expr_t;
 
 
@@ -33,10 +33,10 @@ public:
     virtual expr_t copy() const = 0;
 
     virtual const std::string & name() const = 0; // Id_entifier
-    virtual const std::string & var() const = 0; // Abst_raction
-    virtual const expr_t & term() const = 0; // Abst_raction
-    virtual const expr_t & func() const = 0; // Apply_lication
-    virtual const expr_t & arg() const = 0; // Apply_lication
+    virtual const std::string & var() const = 0; // Abs_raction
+    virtual const expr_t & term() const = 0; // Abs_raction
+    virtual const expr_t & func() const = 0; // App_lication
+    virtual const expr_t & arg() const = 0; // App_lication
 
     virtual std::string str() const = 0;
 
@@ -72,24 +72,24 @@ private:
 
 
 // lambda abstraction
-class Abst_ : public Expr_ {
+class Abs_ : public Expr_ {
 
-    Abst_() = delete;
-    Abst_(const Abst_ &) = delete;
-    Abst_ & operator=(const Abst_ &) = delete;
+    Abs_() = delete;
+    Abs_(const Abs_ &) = delete;
+    Abs_ & operator=(const Abs_ &) = delete;
 
 public:
-    Abst_(const std::string & v, const expr_t & t) : v_(v), t_(t->copy()) {}
-    virtual ~Abst_() {}
+    Abs_(const std::string & v, const expr_t & t) : v_(v), t_(t->copy()) {}
+    virtual ~Abs_() {}
 
     virtual ExprType type() const { return ABSTRACTION; }
-    virtual expr_t copy() const { return expr_t(new Abst_(v_, t_)); }
+    virtual expr_t copy() const { return expr_t(new Abs_(v_, t_)); }
 
-    virtual const std::string & name() const { throw std::runtime_error("Abst_::name(): unsupported"); }
+    virtual const std::string & name() const { throw std::runtime_error("Abs_::name(): unsupported"); }
     virtual const std::string & var() const { return v_; }
     virtual const expr_t & term() const { return t_; }
-    virtual const expr_t & func() const { throw std::runtime_error("Abst_::func(): unsupported"); }
-    virtual const expr_t & arg() const { throw std::runtime_error("Abst_::arg(): unsupported"); }
+    virtual const expr_t & func() const { throw std::runtime_error("Abs_::func(): unsupported"); }
+    virtual const expr_t & arg() const { throw std::runtime_error("Abs_::arg(): unsupported"); }
 
     virtual std::string str() const { return "(\\" + v_ + ". " + t_->str() + ")"; }
 
@@ -97,26 +97,26 @@ private:
     std::string v_;
     expr_t t_;
 
-}; // class Abst_
+}; // class Abs_
 
 
 // lambda application
-class Apply_ : public Expr_ {
+class App_ : public Expr_ {
 
-    Apply_() = delete;
-    Apply_(const Apply_ &) = delete;
-    Apply_ & operator=(const Apply_ &) = delete;
+    App_() = delete;
+    App_(const App_ &) = delete;
+    App_ & operator=(const App_ &) = delete;
 
 public:
-    Apply_(const expr_t & f, const expr_t & x) : f_(f->copy()), x_(x->copy()) {}
-    virtual ~Apply_() {}
+    App_(const expr_t & f, const expr_t & x) : f_(f->copy()), x_(x->copy()) {}
+    virtual ~App_() {}
 
     virtual ExprType type() const { return APPLICATION; }
-    virtual expr_t copy() const { return expr_t(new Apply_(f_, x_)); }
+    virtual expr_t copy() const { return expr_t(new App_(f_, x_)); }
 
-    virtual const std::string & name() const { throw std::runtime_error("Apply_::name(): unsupperted"); }
-    virtual const std::string & var() const { throw std::runtime_error("Apply_::var(): unsupperted"); }
-    virtual const expr_t & term() const { throw std::runtime_error("Apply_::term(): unsupperted"); }
+    virtual const std::string & name() const { throw std::runtime_error("App_::name(): unsupperted"); }
+    virtual const std::string & var() const { throw std::runtime_error("App_::var(): unsupperted"); }
+    virtual const expr_t & term() const { throw std::runtime_error("App_::term(): unsupperted"); }
     virtual const expr_t & func() const { return f_; }
     virtual const expr_t & arg() const { return x_; }
 
@@ -126,14 +126,14 @@ private:
     expr_t f_;
     expr_t x_;
 
-}; // class Apply_
+}; // class App_
 
 
 // utility functions
 
 inline expr_t id(const std::string & n) { return expr_t(new Id_(n)); }
-inline expr_t abstract(const std::string & v, const expr_t & t) { return expr_t(new Abst_(v, t)); }
-inline expr_t apply(const expr_t & f, const expr_t & x) { return expr_t(new Apply_(f, x)); }
+inline expr_t abs(const std::string & v, const expr_t & t) { return expr_t(new Abs_(v, t)); }
+inline expr_t app(const expr_t & f, const expr_t & x) { return expr_t(new App_(f, x)); }
 inline ExprType type(const expr_t & x) { return x->type(); }
 inline expr_t copy(const expr_t & x) { return x->copy(); }
 inline const std::string & name(const expr_t & x) { return x->name(); }
@@ -147,7 +147,7 @@ inline std::string str(const expr_t & x) { return x->str(); }
 std::string tailvar(const expr_t & x);
 
 // x[from / to]
-expr_t varsubstitute(const expr_t & x, const std::string & from, const std::string & to);
+expr_t replace(const expr_t & x, const std::string & from, const std::string & to);
 
 // x[from := to]
 expr_t substitute(const expr_t & x, const std::string & from, const expr_t & to);

@@ -15,8 +15,8 @@ class App_;
 typedef std::shared_ptr<Expr_> expr_t;
 
 
-// term types
-enum ExprType { IDENTIFIER, ABSTRACTION, APPLICATION };
+// term rules
+enum ExprRule { IDENTIFIER, ABSTRACTION, APPLICATION };
 
 
 // base class of lambda terms
@@ -29,7 +29,7 @@ public:
     Expr_() {}
     virtual ~Expr_() {}
 
-    virtual ExprType type() const = 0;
+    virtual ExprRule rule() const = 0;
     virtual expr_t copy() const = 0;
 
     virtual const std::string & name() const = 0; // Id_entifier
@@ -54,7 +54,7 @@ public:
     explicit Id_(const std::string & n) : n_(n) {}
     virtual ~Id_() {}
 
-    virtual ExprType type() const { return IDENTIFIER; }
+    virtual ExprRule rule() const { return IDENTIFIER; }
     virtual expr_t copy() const { return expr_t(new Id_(n_)); }
 
     virtual const std::string & name() const { return n_; }
@@ -82,7 +82,7 @@ public:
     Abs_(const std::string & v, const expr_t & t) : v_(v), t_(t->copy()) {}
     virtual ~Abs_() {}
 
-    virtual ExprType type() const { return ABSTRACTION; }
+    virtual ExprRule rule() const { return ABSTRACTION; }
     virtual expr_t copy() const { return expr_t(new Abs_(v_, t_)); }
 
     virtual const std::string & name() const { throw std::runtime_error("Abs_::name(): unsupported"); }
@@ -111,7 +111,7 @@ public:
     App_(const expr_t & f, const expr_t & x) : f_(f->copy()), x_(x->copy()) {}
     virtual ~App_() {}
 
-    virtual ExprType type() const { return APPLICATION; }
+    virtual ExprRule rule() const { return APPLICATION; }
     virtual expr_t copy() const { return expr_t(new App_(f_, x_)); }
 
     virtual const std::string & name() const { throw std::runtime_error("App_::name(): unsupperted"); }
@@ -134,7 +134,7 @@ private:
 inline expr_t id(const std::string & n) { return expr_t(new Id_(n)); }
 inline expr_t abs(const std::string & v, const expr_t & t) { return expr_t(new Abs_(v, t)); }
 inline expr_t app(const expr_t & f, const expr_t & x) { return expr_t(new App_(f, x)); }
-inline ExprType type(const expr_t & x) { return x->type(); }
+inline ExprRule rule(const expr_t & x) { return x->rule(); }
 inline expr_t copy(const expr_t & x) { return x->copy(); }
 inline const std::string & name(const expr_t & x) { return x->name(); }
 inline const std::string & var(const expr_t & x) { return x->var(); }

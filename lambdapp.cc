@@ -6,7 +6,7 @@ using namespace std;
 namespace lambdapp {
 
 string tailvar(const expr_t & x) {
-    switch (type(x)) {
+    switch (rule(x)) {
         case IDENTIFIER:
             return name(x);
         case ABSTRACTION: {
@@ -23,7 +23,7 @@ string tailvar(const expr_t & x) {
 }
 
 expr_t replace(const expr_t & x, const string & from, const string & to) {
-    switch (type(x)) {
+    switch (rule(x)) {
         case IDENTIFIER:
             return name(x) == from ? id(to) : copy(x);
         case ABSTRACTION:
@@ -34,7 +34,7 @@ expr_t replace(const expr_t & x, const string & from, const string & to) {
 }
 
 expr_t substitute(const expr_t & x, const string & from, const expr_t & to) {
-    switch (type(x)) {
+    switch (rule(x)) {
         case IDENTIFIER:
             return name(x) == from ? copy(to) : copy(x);
         case ABSTRACTION: {
@@ -51,14 +51,14 @@ expr_t substitute(const expr_t & x, const string & from, const expr_t & to) {
 }
 
 expr_t reduce(const expr_t & f, const expr_t & x) {
-    if (type(f) != ABSTRACTION) {
+    if (rule(f) != ABSTRACTION) {
         throw runtime_error("lambdapp::reduce(): 'f' must be an absion object");
     }
     return substitute(term(f), var(f), x);
 }
 
 expr_t leftmost(const expr_t & x) {
-    switch (type(x)) {
+    switch (rule(x)) {
         case IDENTIFIER:
             return copy(x);
         case ABSTRACTION:
@@ -66,7 +66,7 @@ expr_t leftmost(const expr_t & x) {
         case APPLICATION: {
             expr_t f = leftmost(func(x));
             const expr_t & a = arg(x);
-            return type(f) == ABSTRACTION ? leftmost(reduce(f, a)) : app(f, a);
+            return rule(f) == ABSTRACTION ? leftmost(reduce(f, a)) : app(f, a);
         }
     }
 }

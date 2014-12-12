@@ -36,6 +36,13 @@ int main() {
     w = reduce(w, w);
     cout << str(w) << endl;
 
+    // leftmost beta reduction
+    expr_t zzzz = app(xx, yy);
+    cout << str(zzzz) << endl;
+    zzzz = leftmost(app(xx, yy));
+    cout << str(zzzz) << endl;
+    //expr_t ww = leftmost(w); // DANGER: never stop! 
+
     return 0;
 }
 

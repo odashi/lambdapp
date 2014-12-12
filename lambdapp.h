@@ -155,6 +155,9 @@ expr_t substitute(const expr_t & x, const std::string & from, const expr_t & to)
 // beta reduction
 expr_t reduce(const expr_t & f, const expr_t & x);
 
+// leftmost beta reduction
+expr_t leftmost(const expr_t & x);
+
 } // namespace lambdapp
 
 #endif // LAMBDAPP_H_

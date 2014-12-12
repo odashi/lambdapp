@@ -57,5 +57,19 @@ expr_t reduce(const expr_t & f, const expr_t & x) {
     return substitute(term(f), var(f), x);
 }
 
+expr_t leftmost(const expr_t & x) {
+    switch (type(x)) {
+        case IDENTIFIER:
+            return copy(x);
+        case ABSTRACTION:
+            return abs(var(x), leftmost(term(x)));
+        case APPLICATION: {
+            expr_t f = leftmost(func(x));
+            const expr_t & a = arg(x);
+            return type(f) == ABSTRACTION ? leftmost(reduce(f, a)) : app(f, a);
+        }
+    }
+}
+
 }
 

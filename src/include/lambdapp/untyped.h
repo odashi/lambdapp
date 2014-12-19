@@ -1,11 +1,12 @@
-#ifndef LAMBDAPP_H_
-#define LAMBDAPP_H_
+#ifndef LAMBDAPP_UNTYPED_H_
+#define LAMBDAPP_UNTYPED_H_
 
 #include <memory>
 #include <stdexcept>
 #include <string>
 
 namespace lambdapp {
+namespace untyped {
 
 
 class Expr_;
@@ -158,7 +159,10 @@ expr_t reduce(const expr_t & f, const expr_t & x);
 // leftmost beta reduction
 expr_t leftmost(const expr_t & x);
 
+
+} // namespace untyped
 } // namespace lambdapp
 
-#endif // LAMBDAPP_H_
+
+#endif // LAMBDAPP_UNTYPED_H_
 

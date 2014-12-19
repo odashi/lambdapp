@@ -1,8 +1,9 @@
-#include "lambdapp.h"
+#include <lambdapp/untyped.h>
 #include <iostream>
 
 using namespace std;
-using namespace lambdapp;
+using namespace lambdapp::untyped;
+
 
 int main() {
     expr_t x = id("x");

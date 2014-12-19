@@ -1,9 +1,11 @@
-#include "lambdapp.h"
+#include <lambdapp/untyped.h>
+#include <stdexcept>
 //#include <iostream>
 
 using namespace std;
 
 namespace lambdapp {
+namespace untyped {
 
 string tailvar(const expr_t & x) {
     switch (rule(x)) {
@@ -19,6 +21,8 @@ string tailvar(const expr_t & x) {
             string b = tailvar(arg(x));
             return a > b ? a : b;
         }
+        default:
+            throw runtime_error("lambdapp::untyped::tailvar(): unknown rule");
     }
 }
 
@@ -30,6 +34,8 @@ expr_t replace(const expr_t & x, const string & from, const string & to) {
             return var(x) == from ? copy(x) : abs(var(x), replace(term(x), from, to));
         case APPLICATION:
             return app(replace(func(x), from, to), replace(arg(x), from, to));
+        default:
+            throw runtime_error("lambdapp::untyped::replace(): unknown rule");
     }
 }
 
@@ -47,6 +53,8 @@ expr_t substitute(const expr_t & x, const string & from, const expr_t & to) {
         }
         case APPLICATION:
             return app(substitute(func(x), from, to), substitute(arg(x), from, to));
+        default:
+            throw runtime_error("lambdapp::untyped::substitute(): unknown rule");
     }
 }
 
@@ -68,8 +76,11 @@ expr_t leftmost(const expr_t & x) {
             const expr_t & a = arg(x);
             return rule(f) == ABSTRACTION ? leftmost(reduce(f, a)) : app(f, a);
         }
+        default:
+            throw runtime_error("lambdapp::untyped::leftmost(): unknown rule");
     }
 }
 
-}
+} // namespace untyped
+} // namespace lambdapp
 
